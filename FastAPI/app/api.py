@@ -12,13 +12,20 @@ import uuid
 import pandas as pd
 import numpy as np
 
+from pydantic import BaseModel
+
+import ast
+
+class Question(BaseModel):
+    question: str
+    
+
 app = FastAPI()
 
 origins = [
     "http://localhost:5173",
     "localhost:5173"
 ]
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,9 +35,12 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
 df = pd.read_csv('../course_vector_generator/job_vector.csv')
 
 df["status"] = "published"
+
+df['vectors'] = df.vectors.apply(lambda x: ast.literal_eval(str(x)))
 
 # We use only title: {string; status: string ; slug:string, index: number}
 # jobpost	date	Title	Company	AnnouncementCode	Term	Eligibility	Audience	StartDate	Duration	...	ApplicationP	OpeningDate	Deadline	Notes	AboutC	Attach	Year	Month	IT	vectors status
@@ -50,7 +60,7 @@ class Tokenizer(object):
 
 helper_token = Tokenizer()
 
-df2 = df[['jobpost', 'Title', 'status', 'Year']].iloc[:10].to_json()
+df2 = df[['jobpost', 'Title', 'status', 'Year']].to_json(orient='records')
 
 def get_similar(search_term,number_of_neighbours):
 
@@ -79,13 +89,32 @@ def get_similar(search_term,number_of_neighbours):
     #for num in nb_indexes:
     #    return_array.append([title_arrays[num], post_arrays[num].replace('\r', '').replace('\n', '')])
 
-    df2 = df.filter(items = nb_indexes, axis=0)
+    df3 = df.filter(items = nb_indexes, axis=0)
 
-    df2 = df2[['jobpost', 'Title', 'status', 'year']].iloc[:10].to_json()
+    df2 = df3[['jobpost', 'Title', 'status', 'Year']].iloc[:10].to_json(orient='records')#[1:-1].replace('},{', '} {')
     
     return df2 
 
 
-@app.get("/", tags=["root"])
+@app.get("/courses", tags=["courses"])
 async def read_root() -> dict:
     return {"data": df2}
+
+@app.post("/ask")
+def ask(question: Question):
+    searched_df = get_similar(question.question, 10)
+    return {
+        "searched": searched_df
+    }
+
+
+'''
+@app.get("/courses/")
+def query_item_by_parameters(
+    search_input: str | None = None
+) -> dict: 
+    searched_df = get_similar(search_input, 10)
+    return {
+        "searched": searched_df 
+    }
+'''
