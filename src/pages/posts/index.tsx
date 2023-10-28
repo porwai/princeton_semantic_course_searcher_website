@@ -90,6 +90,7 @@ export const Posts = () => {
                 })}
             </div>
             */}
+            
             <Search
                     onKeyUp = {(ek: React.KeyboardEvent<HTMLInputElement>) => {
                         if (ek.key === 'Enter') {
@@ -101,11 +102,13 @@ export const Posts = () => {
                 {activeFilter
                     .map(
                         (
-                            post: { Title: string; status: string ; year:string, jobpost:string}
+                            post: { Title: string; status: string ; year:string; jobpost:string}, 
+                            index: number,
                         ) => {
                             return (
                                 <Card
-                                    key={post.jobpost}
+                                    key={index}
+                                    jobpost={post.jobpost}
                                     title={post.Title}
                                     link={post.year}
                                     status={post.status}
