@@ -24,7 +24,7 @@ export const Search = ({
             type="text"
             //onChange={onChange}
             onKeyUp={onKeyUp}
-            placeholder="Search Princeton Courses By the Power of Semantic Search"
+            placeholder="Search Princeton Courses By the Power of Semantic Search (Click Courses to see details)"
         />
     );
 };

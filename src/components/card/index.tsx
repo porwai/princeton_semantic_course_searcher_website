@@ -17,6 +17,7 @@ export const Card = ({ jobpost, title, status, link }: { jobpost:string; title: 
             initial={{ opacity: 0 }}
             exit={{ opacity: 0 }}
         >
+            <div className={styles.row} {...getToggleProps()}>
             <div
                 className={styles.circle}
                 style={{
@@ -30,11 +31,11 @@ export const Card = ({ jobpost, title, status, link }: { jobpost:string; title: 
                 }
             }
             ></div>
-            <h3 className={styles.title} {...getToggleProps()}><a href={link} >{title}</a></h3>
+            <h3 className={styles.title}><a href={link} >{title}</a></h3>
+            </div>
             <div className={styles.expanded} {...getCollapseProps()}>
             <h3 className="content">
-                Now you can see the hidden content. <br/><br/>
-                Click again to hide...
+                {jobpost}
             </h3>
             </div>
         </motion.div>
