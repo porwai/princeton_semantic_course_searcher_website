@@ -16,7 +16,6 @@ export const Posts = () => {
     const [inputValue, setInputValue] = useState("");
     //const [inputSearch, setInputSearch] = useContext(dataContext);
     const [activeFilter, setActiveFilter] = useState([]);
-    //const [search, setSearch] = useState("");
 
     const fetchFilter = async () => {
         const response = await fetch("http://localhost:8000/courses");
@@ -39,16 +38,20 @@ export const Posts = () => {
         console.log(response1);
         const file3 = await response1.json();
         const file4 = JSON.parse(file3.searched);
+        setActiveFilter([]);
         setActiveFilter(file4);
     }
     
     
     useEffect(() => {
         fetchFilter()
-      }, [])
+        console.log("Hi");
+    }, [])
 
     useEffect(() => {
         updateSearch(inputValue);
+        console.log("Jo")
+        console.log(activeFilter);
     }, [inputValue])
 
     // Old Code for obtaining jobposting data
@@ -61,14 +64,10 @@ export const Posts = () => {
         resource: "posts",
         ids: Array.from(Array(8).keys()).slice(1),
     }).data?.data;
+
     // Working on progress to create filters for distribution requirements
     const filters: string[] = ["published", "draft", "rejected"];
-    
-    
-    console.log(activeFilter);
-    console.log(typeof(activeFilter))
-    
-
+        
     /// Main function and body
     return (
         <motion.div>
@@ -92,24 +91,11 @@ export const Posts = () => {
             </div>
             */}
             <Search
-                    /*
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        if (search === "true") {
-                            setInputValue(e.target.value);
-                            console.log(inputValue);
-                            setSearch("false")
-                        }
-                    }}
-                    */
-                    
                     onKeyUp = {(ek: React.KeyboardEvent<HTMLInputElement>) => {
                         if (ek.key === 'Enter') {
                             setInputValue((ek.target as HTMLInputElement).value);
                         } 
                     }}
-                    
-                    //onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    //setInputValue(e.target.value);}}
             />
             <AnimatePresence>
                 {activeFilter
